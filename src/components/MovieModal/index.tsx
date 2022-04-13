@@ -48,21 +48,17 @@ const MovieModal: FC<MovieModalProps> = ({
 	};
 
 	useEffect(() => {
-		fetchMovie(id);
+		if (open) fetchMovie(id);
 	}, [open]);
 
 	return (
-		<Modal
-			open={open}
-			onClose={handleModalClose}
-			aria-labelledby='modal-modal-title'
-			aria-describedby='modal-modal-description'>
+		<Modal open={open} onClose={handleModalClose}>
 			<Box className='modal-box' bgcolor='background.paper'>
 				<TextField
 					id='standard-basic'
 					label='Title'
 					variant='standard'
-					value={movie?.title}
+					value={movie?.title || ''}
 					onChange={e => movie && setMovie({ ...movie, title: e.target.value })}
 					fullWidth
 				/>

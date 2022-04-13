@@ -43,7 +43,7 @@ const MovieList: FC<MovieListProps> = ({
 								<TableCell>S. No.</TableCell>
 								<TableCell width={250}>Movie Title</TableCell>
 								<TableCell>Movie Year</TableCell>
-								<TableCell>Movie Poster</TableCell>
+								<TableCell width={250}>Movie Poster</TableCell>
 								<TableCell>Action</TableCell>
 								<TableCell>View</TableCell>
 							</TableRow>

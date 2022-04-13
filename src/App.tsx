@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { useState } from 'react';
 
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+
 import MovieSearch from './components/MovieSearch';
 import MovieList from './components/MovieList';
 
@@ -17,6 +20,8 @@ const App = () => {
 	const [movies, setMovies] = useState<Movie[]>([]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>('ascending');
 
+	const [page, setPage] = useState(0);
+
 	const fetchMovies = async () => {
 		try {
 			let { data } = await axios.get(
@@ -28,7 +33,31 @@ const App = () => {
 				);
 				setMovies(movies);
 				setError('');
+
+				setPage(page + 1);
 			} else setError(data.Error);
+		} catch (ex) {
+			console.log(ex);
+		}
+	};
+
+	const loadMoreMovies = async () => {
+		let currPage = page + 1;
+		try {
+			let { data } = await axios.get(
+				`https://www.omdbapi.com/?s=${title}}&apikey=5690d9bf&page=${
+					currPage + 1
+				}`
+			);
+			if (data.Response === 'True') {
+				const newMovies = (data.Search as FetchedMovie[]).map(fm =>
+					mapMovieToViewModel(fm)
+				);
+				setMovies(movies.concat(newMovies));
+				setError('');
+			} else setError(data.Error);
+
+			setPage(currPage);
 		} catch (ex) {
 			console.log(ex);
 		}
@@ -86,6 +115,17 @@ const App = () => {
 				sortMovies={handleMovieSort}
 				handleMovieTitleChange={handleMovieTitleChange}
 			/>
+
+			{page !== 0 && (
+				<Container className='load-more-container'>
+					<Button
+						variant='outlined'
+						className='button'
+						onClick={loadMoreMovies}>
+						LOAD MORE
+					</Button>
+				</Container>
+			)}
 		</div>
 	);
 };
