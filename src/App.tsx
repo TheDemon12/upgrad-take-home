@@ -7,6 +7,8 @@ import Container from '@mui/material/Container';
 import MovieSearch from './components/MovieSearch';
 import MovieList from './components/MovieList';
 
+import { getMovies } from './services/movie';
+
 import { FetchedMovie, Movie } from './interfaces/Movie';
 import { mapMovieToViewModel } from './utils/Models';
 
@@ -24,18 +26,14 @@ const App = () => {
 
 	const fetchMovies = async () => {
 		try {
-			let { data } = await axios.get(
-				`https://www.omdbapi.com/?s=${title}}&apikey=5690d9bf`
-			);
-			if (data.Response === 'True') {
-				const movies = (data.Search as FetchedMovie[]).map(fm =>
-					mapMovieToViewModel(fm)
-				);
+			let { response, fetchedMovies, error } = await getMovies(title);
+			if (response) {
+				const movies = fetchedMovies.map(fm => mapMovieToViewModel(fm));
 				setMovies(movies);
 				setError('');
 
 				setPage(page + 1);
-			} else setError(data.Error);
+			} else setError(error);
 		} catch (ex) {
 			console.log(ex);
 		}
@@ -44,18 +42,13 @@ const App = () => {
 	const loadMoreMovies = async () => {
 		let currPage = page + 1;
 		try {
-			let { data } = await axios.get(
-				`https://www.omdbapi.com/?s=${title}}&apikey=5690d9bf&page=${
-					currPage + 1
-				}`
-			);
-			if (data.Response === 'True') {
-				const newMovies = (data.Search as FetchedMovie[]).map(fm =>
-					mapMovieToViewModel(fm)
-				);
+			let { response, fetchedMovies, error } = await getMovies(title, currPage);
+
+			if (response) {
+				const newMovies = fetchedMovies.map(fm => mapMovieToViewModel(fm));
 				setMovies(movies.concat(newMovies));
 				setError('');
-			} else setError(data.Error);
+			} else setError(error);
 
 			setPage(currPage);
 		} catch (ex) {
@@ -67,6 +60,7 @@ const App = () => {
 		setTitle('');
 		setMovies([]);
 		setError('');
+		setPage(0);
 	};
 
 	const handleMovieSort = () => {

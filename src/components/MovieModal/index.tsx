@@ -15,6 +15,7 @@ import { ExpandedFetchedMovie, ExpandedMovie } from '../../interfaces/Movie';
 import { mapExpandedMovieToViewModel } from '../../utils/Models';
 
 import './movieModal.css';
+import { getMovie } from '../../services/movie';
 
 interface MovieModalProps {
 	id: string;
@@ -34,16 +35,14 @@ const MovieModal: FC<MovieModalProps> = ({
 
 	const fetchMovie = async (id: string) => {
 		try {
-			let { data } = await axios.get(
-				`https://www.omdbapi.com/?i=${id}&apikey=5690d9bf`
-			);
+			let { response, fetchedMovie, error } = await getMovie(id);
 
-			if (data.Response === 'True') {
-				const movie = mapExpandedMovieToViewModel(data as ExpandedFetchedMovie);
+			if (response) {
+				const movie = mapExpandedMovieToViewModel(fetchedMovie);
 
 				setMovie(movie);
 				setError('');
-			} else setError(data.Error);
+			} else setError(error);
 		} catch (ex) {}
 	};
 
