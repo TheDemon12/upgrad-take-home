@@ -2,23 +2,7 @@
 	margin: 1rem 0;
 }
 
-.search-container {
-	display: flex !important;
-	justify-content: center;
-	margin: 2rem 0;
-}
-
-.poster-image {
-	height: 200px;
-}
-
-.sort-button {
-	width: 200px;
-	align-self: end;
-}
-
-.search-button,
-.clear-button {
+.button {
 	height: 3rem;
 	min-width: 10rem !important;
 }

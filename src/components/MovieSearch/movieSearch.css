@@ -1,0 +1,11 @@
+.search-container {
+	display: flex !important;
+	justify-content: center;
+	margin: 2rem 0;
+	min-width: 650px;
+}
+
+.button {
+	height: 3rem;
+	min-width: 10rem !important;
+}
