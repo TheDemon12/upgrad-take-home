@@ -51,7 +51,7 @@ const App = () => {
 	const fetchMovies = async () => {
 		try {
 			let { data } = await axios.get(
-				`http://www.omdbapi.com/?s=${title}}&apikey=5690d9bf`
+				`https://www.omdbapi.com/?s=${title}}&apikey=5690d9bf`
 			);
 			console.log(title, data);
 			if (data.Response === 'True') {
