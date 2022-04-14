@@ -1,5 +1,11 @@
 Upgrad Assignment - https://upgrad.kartikbhalla.dev
 
+Technology Used - 
+- Reactjs
+- Typescript
+- Redux Toolkit
+- Material UI
+
 Features added - 
 - Search movies by name
 - View individual movie 
