@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -11,22 +12,18 @@ import { Movie } from '../../interfaces/Movie';
 
 import './movieListElement.css';
 import MovieModal from '../MovieModal';
+import { deleteMovie } from '../../app/movies';
 
 interface MovieListElementProps {
 	rowNumber: number;
 	movie: Movie;
-	deleteMovie: (id: string) => void;
-	handleMovieTitleChange: (id: string, updatedTitle: string) => void;
 }
 
-const MovieListElement: FC<MovieListElementProps> = ({
-	rowNumber,
-	movie,
-	deleteMovie,
-	handleMovieTitleChange,
-}) => {
+const MovieListElement: FC<MovieListElementProps> = ({ rowNumber, movie }) => {
 	const [modal, setModal] = useState(false);
 	const handleModalClose = () => setModal(false);
+
+	const dispatch = useDispatch();
 
 	return (
 		<>
@@ -47,7 +44,7 @@ const MovieListElement: FC<MovieListElementProps> = ({
 					<Button
 						variant='outlined'
 						color='error'
-						onClick={() => deleteMovie(movie.id)}>
+						onClick={() => dispatch(deleteMovie(movie.id))}>
 						DELETE
 						<DeleteIcon />
 					</Button>
@@ -63,7 +60,6 @@ const MovieListElement: FC<MovieListElementProps> = ({
 				id={movie.id}
 				open={modal}
 				handleModalClose={handleModalClose}
-				handleMovieTitleChange={handleMovieTitleChange}
 			/>
 		</>
 	);

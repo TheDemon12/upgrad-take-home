@@ -1,5 +1,5 @@
-import { FC, useState, useEffect } from 'react';
-import axios from 'axios';
+import { FC, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -11,43 +11,23 @@ import Button from '@mui/material/Button';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { ExpandedFetchedMovie, ExpandedMovie } from '../../interfaces/Movie';
-import { mapExpandedMovieToViewModel } from '../../utils/Models';
-
 import './movieModal.css';
-import { getMovie } from '../../services/movie';
+import { updateMovieTitle } from '../../app/movies';
+import { fetchMovie, updateTitle } from '../../app/movie';
+import { RootState } from '../../app/store';
 
 interface MovieModalProps {
 	id: string;
 	open: boolean;
 	handleModalClose: () => void;
-	handleMovieTitleChange: (id: string, updatedTitle: string) => void;
 }
 
-const MovieModal: FC<MovieModalProps> = ({
-	id,
-	open,
-	handleModalClose,
-	handleMovieTitleChange,
-}) => {
-	const [movie, setMovie] = useState<ExpandedMovie>();
-	const [error, setError] = useState('');
-
-	const fetchMovie = async (id: string) => {
-		try {
-			let { response, fetchedMovie, error } = await getMovie(id);
-
-			if (response) {
-				const movie = mapExpandedMovieToViewModel(fetchedMovie);
-
-				setMovie(movie);
-				setError('');
-			} else setError(error);
-		} catch (ex) {}
-	};
+const MovieModal: FC<MovieModalProps> = ({ id, open, handleModalClose }) => {
+	const dispatch = useDispatch();
+	const { details, error } = useSelector((state: RootState) => state.movie);
 
 	useEffect(() => {
-		if (open) fetchMovie(id);
+		if (open) dispatch(fetchMovie(id));
 	}, [open]);
 
 	return (
@@ -57,38 +37,38 @@ const MovieModal: FC<MovieModalProps> = ({
 					id='standard-basic'
 					label='Title'
 					variant='standard'
-					value={movie?.title || ''}
-					onChange={e => movie && setMovie({ ...movie, title: e.target.value })}
+					value={details.title || ''}
+					onChange={e => dispatch(updateTitle(e.target.value))}
 					fullWidth
 				/>
 				<img
-					src={movie?.posterUrl}
+					src={details.posterUrl}
 					className='movie-poster'
-					alt={movie?.title}
+					alt={details.title}
 				/>
 
 				<Typography variant='body1' gutterBottom>
-					Release Date - {movie?.releaseDate}
+					Release Date - {details.releaseDate}
 				</Typography>
 				<Divider />
 				<Typography variant='body1' gutterBottom>
-					Directed By - {movie?.director}
+					Directed By - {details.director}
 				</Typography>
 				<Divider />
 				<Typography variant='body1' gutterBottom>
-					Genre - {movie?.genre}
+					Genre - {details.genre}
 				</Typography>
 				<Divider />
 				<Typography variant='body1' gutterBottom>
-					Actors - {movie?.actors}
+					Actors - {details.actors}
 				</Typography>
 				<Divider />
 				<Typography variant='body1' gutterBottom>
-					IMDB Rating - {movie?.rating}
+					IMDB Rating - {details.rating}
 				</Typography>
 				<Divider />
 				<Typography variant='body1' gutterBottom>
-					Plot - {movie?.plot}
+					Plot - {details.plot}
 				</Typography>
 
 				<Stack spacing={4} direction='row' className='modal-buttons'>
@@ -96,7 +76,7 @@ const MovieModal: FC<MovieModalProps> = ({
 						variant='contained'
 						onClick={() => {
 							handleModalClose();
-							handleMovieTitleChange(movie!.id, movie!.title);
+							dispatch(updateMovieTitle(details.id, details.title));
 						}}
 						className='button'>
 						Save

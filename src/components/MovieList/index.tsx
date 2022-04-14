@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -13,27 +14,22 @@ import Button from '@mui/material/Button';
 
 import MovieListElement from '../MovieListElement';
 
-import { Movie } from '../../interfaces/Movie';
+import { RootState } from '../../app/store';
+import { sortMovies } from '../../app/movies';
 
 import './movieList.css';
 
-interface MovieListProps {
-	movies: Movie[];
-	deleteMovie: (id: string) => void;
-	sortMovies: () => void;
-	handleMovieTitleChange: (id: string, updatedTitle: string) => void;
-}
+const MovieList: FC = () => {
+	const dispatch = useDispatch();
+	const { list } = useSelector((state: RootState) => state.movies);
 
-const MovieList: FC<MovieListProps> = ({
-	movies,
-	deleteMovie,
-	sortMovies,
-	handleMovieTitleChange,
-}) => {
 	return (
 		<Container>
 			<Stack spacing={4} direction='column'>
-				<Button variant='outlined' className='sort-button' onClick={sortMovies}>
+				<Button
+					variant='outlined'
+					className='sort-button'
+					onClick={() => dispatch(sortMovies())}>
 					SORT
 				</Button>
 				<TableContainer component={Paper}>
@@ -49,13 +45,11 @@ const MovieList: FC<MovieListProps> = ({
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{movies.map((movie, index) => (
+							{list.map((movie, index) => (
 								<MovieListElement
 									key={index}
 									movie={movie}
 									rowNumber={index + 1}
-									deleteMovie={deleteMovie}
-									handleMovieTitleChange={handleMovieTitleChange}
 								/>
 							))}
 						</TableBody>
